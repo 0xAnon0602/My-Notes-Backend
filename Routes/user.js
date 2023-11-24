@@ -20,6 +20,7 @@ router.get("/notes", async(req, res) => {
 	}
 });
 
+
 router.post("/addNote", async(req, res) => {
 	if (req.user) {
 
@@ -47,6 +48,25 @@ router.post("/addNote", async(req, res) => {
 	}
 });
 
+
+router.post("/updateNote", async(req, res) => {
+	if (req.user) {
+
+       const { noteId, newTitle, newText } = req.body;
+
+       await Note.findOneAndUpdate(
+        { "notes._id": noteId },
+        { $set: { "notes.$.title": newTitle, "notes.$.text": newText, "notes.$.lastUpdate":Math.floor(Date.now() / 1000) } }
+        )
+
+		res.status(200).json({
+			error: false,
+			message: "Sucess"
+		});
+	} else {
+		res.status(403).json({ error: true, message: "Not Authorized" });
+	}
+});
 
 
 router.post("/deleteNote", async(req, res) => {
