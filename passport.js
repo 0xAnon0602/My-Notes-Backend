@@ -1,6 +1,7 @@
 const passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require("./Schemas/User.js")
+const Note = require('./Schemas/Note.js')
 require('dotenv').config()
 
 passport.use(new GoogleStrategy({
@@ -23,6 +24,18 @@ async function(request, accessToken, refreshToken, profile, done) {
                 googleId: profile.id,
                 name:profile.displayName,
                 lastLogin: Math.floor(Date.now() / 1000)
+            }
+        )
+        await Note.insertMany(
+            {
+                googleId: profile.id,
+                notes: [
+                    {
+                        title:"How to use my notes",
+                        text:"You can add notes from the new note section",
+                        lastUpdate: Math.floor(Date.now() / 1000)
+                    }
+                ]
             }
         )
     }else{

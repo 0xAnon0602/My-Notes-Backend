@@ -3,7 +3,8 @@ const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose')
 const cors = require('cors'); 
-const authRoute = require("./Routes/auth");
+const authRoute = require('./Routes/auth');
+const userRoute = require('./Routes/user')
 require('./passport');
 require('dotenv').config()
 
@@ -16,6 +17,9 @@ app.use(
 		credentials: true,
 	})
 );
+
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 mongoose.connect(
     process.env.MONGO_URL,
@@ -34,6 +38,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoute);
+app.use("/user", userRoute);
 
 
 app.listen(8080, () => console.log('listening on port: 8080'));
