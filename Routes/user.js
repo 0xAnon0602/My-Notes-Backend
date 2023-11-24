@@ -1,15 +1,19 @@
 const router = require("express").Router();
 const passport = require("passport");
 const Note = require("../Schemas/Note.js")
+const updateLog = require('../Utils/updateLog.js')
 require('dotenv').config()
 
 
 router.get("/notes", async(req, res) => {
 	if (req.user) {
 
-        const allNotes = await Note.findOne({
+        const findQuery = {
             googleId: req.user._json.sub
-        })
+        }
+
+        const allNotes = await Note.findOne(findQuery)
+        await updateLog(req.user._json.sub,'findOne','Notes',[findQuery])
 
 		res.status(200).json({
 			error: false,
@@ -24,10 +28,8 @@ router.get("/notes", async(req, res) => {
 router.post("/addNote", async(req, res) => {
 	if (req.user) {
 
-       await Note.findOneAndUpdate(
-            {
-            googleId: req.user._json.sub
-            },
+        const addNoteQuery = [
+            {googleId: req.user._json.sub},
             {
                 $push: {
                   notes: {
@@ -36,8 +38,10 @@ router.post("/addNote", async(req, res) => {
                     lastUpdate: Math.floor(Date.now() / 1000)
                   },
                 },
-            },
-        )
+            },]
+
+       await Note.findOneAndUpdate(addNoteQuery[0],addNoteQuery[1])
+       await updateLog(req.user._json.sub,'findOneAndUpdate','Notes',addNoteQuery)
 
 		res.status(200).json({
 			error: false,
@@ -54,10 +58,14 @@ router.post("/updateNote", async(req, res) => {
 
        const { noteId, newTitle, newText } = req.body;
 
-       await Note.findOneAndUpdate(
+       const updateNoteQuery =[
         { "notes._id": noteId },
         { $set: { "notes.$.title": newTitle, "notes.$.text": newText, "notes.$.lastUpdate":Math.floor(Date.now() / 1000) } }
-        )
+       ]
+
+       await Note.findOneAndUpdate(updateNoteQuery[0],updateNoteQuery[1])
+       await updateLog(req.user._json.sub,'findOneAndUpdate','Notes',updateNoteQuery)
+    
 
 		res.status(200).json({
 			error: false,
@@ -72,13 +80,13 @@ router.post("/updateNote", async(req, res) => {
 router.post("/deleteNote", async(req, res) => {
 	if (req.user) {
 
-       await Note.findOneAndUpdate(
-            {
-            googleId: req.user._json.sub
-            },
-            { $pull: { notes: { _id: req.body.noteId } } },
+        const deleteNoteQuery = [
+            {googleId: req.user._json.sub},
+            { $pull: { notes: { _id: req.body.noteId } } }
+        ]
 
-        )
+       await Note.findOneAndUpdate(deleteNoteQuery[0],deleteNoteQuery[1])
+       await updateLog(req.user._json.sub,'findOneAndUpdate','Notes',deleteNoteQuery)
 
 		res.status(200).json({
 			error: false,
