@@ -49,5 +49,25 @@ router.post("/addNote", async(req, res) => {
 
 
 
+router.post("/deleteNote", async(req, res) => {
+	if (req.user) {
+
+       await Note.findOneAndUpdate(
+            {
+            googleId: req.user._json.sub
+            },
+            { $pull: { notes: { _id: req.body.noteId } } },
+
+        )
+
+		res.status(200).json({
+			error: false,
+			message: "Sucess"
+		});
+	} else {
+		res.status(403).json({ error: true, message: "Not Authorized" });
+	}
+});
+
 
 module.exports = router;
