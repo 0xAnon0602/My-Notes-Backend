@@ -35,13 +35,21 @@ router.post("/addNote", async(req, res) => {
                   notes: {
                     title: req.body.title,
                     text: req.body.text,
+                    category:req.body.category,
                     lastUpdate: Math.floor(Date.now() / 1000)
                   },
                 },
-            },]
+            }]
+
+        const addCateogryQuery = [
+            { googleId: req.user._json.sub, categories: { $ne: req.body.category } }, 
+            { $addToSet: { categories: req.body.category } } 
+        ]
 
        await Note.findOneAndUpdate(addNoteQuery[0],addNoteQuery[1])
+       await Note.updateOne(addCateogryQuery[0],addCateogryQuery[1])
        await updateLog(req.user._json.sub,'findOneAndUpdate','Notes',addNoteQuery)
+       await updateLog(req.user._json.sub,'updateOne','Notes',addCateogryQuery)
 
 		res.status(200).json({
 			error: false,

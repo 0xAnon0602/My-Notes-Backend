@@ -34,10 +34,12 @@ async function(request, accessToken, refreshToken, profile, done) {
 
         const noteQuery = {
             googleId: profile.id,
+            categories:['Home'],
             notes: [
                 {
                     title:"How to use my notes",
                     text:"You can add notes from the new note section",
+                    category:'Home',
                     lastUpdate: Math.floor(Date.now() / 1000)
                 }
             ]

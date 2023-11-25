@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 
 const noteSchema = new mongoose.Schema({
     googleId:String,
-    notesCount:Number,
+    categories:[String],
     notes:[
         {
             title:String,
             text:String,
+            category:String,
             lastUpdate:String
         }
     ]
