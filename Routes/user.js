@@ -41,13 +41,15 @@ router.post("/addNote", async(req, res) => {
                 },
             }]
 
-        const addCateogryQuery = [
-            { googleId: req.user._json.sub, categories: { $ne: req.body.category } }, 
-            { $addToSet: { categories: req.body.category } } 
-        ]
+        if(req.body.category != ''){
+            const addCateogryQuery = [
+                { googleId: req.user._json.sub, categories: { $ne: req.body.category } }, 
+                { $addToSet: { categories: req.body.category } } 
+            ]
+            await Note.updateOne(addCateogryQuery[0],addCateogryQuery[1])
+        }
 
        await Note.findOneAndUpdate(addNoteQuery[0],addNoteQuery[1])
-       await Note.updateOne(addCateogryQuery[0],addCateogryQuery[1])
        await updateLog(req.user._json.sub,'findOneAndUpdate','Notes',addNoteQuery)
        await updateLog(req.user._json.sub,'updateOne','Notes',addCateogryQuery)
 
