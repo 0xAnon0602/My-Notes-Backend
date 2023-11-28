@@ -47,11 +47,11 @@ router.post("/addNote", async(req, res) => {
                 { $addToSet: { categories: req.body.category } } 
             ]
             await Note.updateOne(addCateogryQuery[0],addCateogryQuery[1])
+            await updateLog(req.user._json.sub,'updateOne','Notes',addCateogryQuery)
         }
 
        await Note.findOneAndUpdate(addNoteQuery[0],addNoteQuery[1])
        await updateLog(req.user._json.sub,'findOneAndUpdate','Notes',addNoteQuery)
-       await updateLog(req.user._json.sub,'updateOne','Notes',addCateogryQuery)
 
 		res.status(200).json({
 			error: false,
