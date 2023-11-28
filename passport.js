@@ -37,10 +37,16 @@ async function(request, accessToken, refreshToken, profile, done) {
             categories:['Home'],
             notes: [
                 {
-                    title:"How to use my notes",
-                    text:"You can add notes from the new note section",
+                    title:"How to use My Notes",
+                    text:"You can easily add notes by using the above section and edit the notes directly from the notes and it will be updated instantly",
                     category:'Home',
                     lastUpdate: Math.floor(Date.now() / 1000)
+                },
+                {
+                    title:"How to search Notes",
+                    text:"You can easily search the note by selecting search from the top and selecting the title and category",
+                    category:'Home',
+                    lastUpdate: Math.floor(Date.now() / 1000) 
                 }
             ]
         }
